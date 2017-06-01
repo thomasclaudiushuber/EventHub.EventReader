@@ -48,7 +48,7 @@
     <TextBlock Grid.Row="4" Text="3. Start receiving events by pushing this button:"/>
     <Button Grid.Row="5" Margin="5" HorizontalAlignment="Left" Content="Yes, let's GO!" Command="{Binding StartReceivingEventsCommand}"/>
 
-    <TextBlock Grid.Row="6" Text="3. Look at the received events (new events at the top):"/>
+    <TextBlock Grid.Row="6" Text="4. Look at the received events (new events at the top):"/>
     <TextBox Grid.Row="7" IsReadOnly="True" Text="{Binding ReceivedEvents}" TextWrapping="Wrap"/>
   </Grid>
 </Window>
