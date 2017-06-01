@@ -5,12 +5,12 @@ using ThomasClaudiusHuber.EventHub.Receiver.ViewModel;
 namespace ThomasClaudiusHuber.EventHub.Receiver
 {
   public partial class MainWindow : Window
+  {
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
+      InitializeComponent();
 
-            DataContext = new MainViewModel(new EventHubSubscriber());
-        }
+      DataContext = new MainViewModel(new EventHubSubscriber());
     }
+  }
 }

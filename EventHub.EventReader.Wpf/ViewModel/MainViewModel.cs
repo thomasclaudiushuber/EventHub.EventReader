@@ -9,12 +9,14 @@ namespace ThomasClaudiusHuber.EventHub.Receiver.ViewModel
 {
   public class MainViewModel : ViewModelBase
   {
-    private string _receivedEvents="";
+    private string _receivedEvents = "";
     private bool _isStarting;
     private int _selectedHoursAgoToStartFrom;
+    private IEnumerable<int> _hoursAgoToStartFromList;
     private string _connectionString = "";
     private readonly EventHubSubscriber _eventHubSubscriber;
     private static readonly object _lock = new object();
+
     public MainViewModel(EventHubSubscriber eventHubSubscriber)
     {
       _eventHubSubscriber = eventHubSubscriber;
@@ -39,8 +41,6 @@ namespace ThomasClaudiusHuber.EventHub.Receiver.ViewModel
         OnPropertyChanged();
       }
     }
-
-    private IEnumerable<int> _hoursAgoToStartFromList;
 
     public IEnumerable<int> HoursAgoToStartFromList
     {

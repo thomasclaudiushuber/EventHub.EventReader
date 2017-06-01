@@ -27,6 +27,16 @@ namespace ThomasClaudiusHuber.EventHub.Receiver.DataAccess
         _cts.Cancel();
       }
 
+      _cts = new CancellationTokenSource();
+      _token = _cts.Token;
+
+      List<EventHubReceiver> receivers = CreateEventHubReceivers(connectionString, hoursAgoToStartFrom);
+
+      StartTaskForEachReceiver(receivers);
+    }
+
+    private static List<EventHubReceiver> CreateEventHubReceivers(string connectionString, int hoursAgoToStartFrom)
+    {
       var client = EventHubClient.CreateFromConnectionString(connectionString);
 
       EventHubConsumerGroup consumerGroup = client.GetDefaultConsumerGroup();
@@ -35,10 +45,11 @@ namespace ThomasClaudiusHuber.EventHub.Receiver.DataAccess
       List<EventHubReceiver> receivers =
       partitionIds.Select(
         partitionId => consumerGroup.CreateReceiver(partitionId, DateTime.UtcNow.AddHours(hoursAgoToStartFrom))).ToList();
+      return receivers;
+    }
 
-      _cts = new CancellationTokenSource();
-      _token = _cts.Token;
-
+    private void StartTaskForEachReceiver(List<EventHubReceiver> receivers)
+    {
       _tasks = new List<Task>();
       foreach (var receiver in receivers)
       {
@@ -53,13 +64,7 @@ namespace ThomasClaudiusHuber.EventHub.Receiver.DataAccess
                 break;
               }
 
-              var message = receiver.Receive();
-
-              if (message != null)
-              {
-                string body = Encoding.UTF8.GetString(message.GetBytes());
-                OnEventReceived(body);
-              }
+              ReceiveEventFromReceiver(receiver);
             }
             catch (Exception ex)
             {
@@ -69,6 +74,17 @@ namespace ThomasClaudiusHuber.EventHub.Receiver.DataAccess
 
         }, _token);
         _tasks.Add(task);
+      }
+    }
+
+    private void ReceiveEventFromReceiver(EventHubReceiver receiver)
+    {
+      var message = receiver.Receive();
+
+      if (message != null)
+      {
+        string body = Encoding.UTF8.GetString(message.GetBytes());
+        OnEventReceived(body);
       }
     }
 
